@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/goproxy/goproxy v0.7.2
-	golang.org/x/mod v0.5.0
+	golang.org/x/mod v0.5.1
 	k8s.io/klog/v2 v2.20.0
 )
 
