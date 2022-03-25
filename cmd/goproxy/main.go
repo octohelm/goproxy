@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"github.com/querycap/goproxy/internal/version"
 	"net/http"
 	"os"
 	"os/signal"
@@ -11,6 +10,7 @@ import (
 	"time"
 
 	"github.com/goproxy/goproxy"
+	"github.com/octohelm/goproxy/pkg/version"
 	"golang.org/x/mod/module"
 	"k8s.io/klog/v2/klogr"
 )
@@ -36,8 +36,8 @@ func main() {
 	l := klogr.New()
 
 	s := &http.Server{}
-	s.Handler = http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 
+	s.Handler = http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 		if len(req.URL.Path) > 0 {
 			if goprivate != "" && module.MatchPrefixPatterns(goprivate, req.RequestURI[1:]) {
 				rw.WriteHeader(http.StatusNotFound)
@@ -45,13 +45,12 @@ func main() {
 				return
 			}
 		}
-
 		g.ServeHTTP(rw, req)
 	})
 	s.Addr = "0.0.0.0:80"
 
 	go func() {
-		l.Info("goproxy "+version.Version+" serve on", "addr", s.Addr)
+		l.Info("goproxy "+version.FullVersion()+" serve on", "addr", s.Addr)
 		if err := s.ListenAndServe(); err != nil {
 			l.Error(err, "")
 		}
