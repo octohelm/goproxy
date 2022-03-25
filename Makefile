@@ -1,30 +1,53 @@
 PKG = $(shell cat go.mod | grep "^module " | sed -e "s/module //g")
-VERSION = $(shell cat .version)
+VERSION = $(shell cat internal/version/version)
 COMMIT_SHA ?= $(shell git rev-parse --short HEAD)
-NAME = goproxy
+TAG ?= dev
 
-GOBUILD = CGO_ENABLED=0 STATIC=0 go build
-GOBIN ?= ./bin
+TARGET ?= goproxy
+TARGET_PLATFORMS ?= $(GOOS)/amd64
+
 GOOS ?= $(shell go env GOOS)
 GOARCH ?= $(shell go env GOARCH)
-
-HUB ?= docker.io/querycap
-
-DOCKERX_NAME ?= $(NAME)
-DOCKERX_TAGS ?= $(VERSION)
+GO_LDFLAGS = -trimpath -ldflags="-s -w -X github.com/go-courier/goproxy/pkg/version.Version=$(VERSION)+sha.$(COMMIT_SHA)"
 
 up:
-	go run .
+	go run ./cmd/$(TARGET)
 
-build:
-	$(GOBUILD) -o $(GOBIN)/$(NAME)-$(GOOS)-$(GOARCH) ./main.go
+fmt:
+	goimports -l -w .
 
-prepare:
-	@echo ::set-output name=image::$(NAME):$(TAG)
-	@echo ::set-output name=build_args::VERSION=$(VERSION)
+dep:
+	go get -u -t ./...
 
-lint:
-	husky hook pre-commit
-	husky hook commit-msg
+tidy:
+	go mod tidy
 
-include hack/Makefile
+build: GOOS = linux
+build: GOARCH = amd64 arm64
+build: tidy
+	@$(foreach os,$(GOOS), \
+		$(foreach arch,$(GOARCH), \
+			$(MAKE) build.bin GOOS=$(os) GOARCH=$(arch); \
+		)\
+	)
+
+build.bin:
+	CGO_ENABLED=0 go build $(GO_LDFLAGS) \
+		-o ./bin/$(TARGET)-$(GOOS)-$(GOARCH) ./cmd/$(TARGET)
+
+DOCKER_NAMESPACES ?= ghcr.io/querycap
+DOCKER_LABELS ?= org.opencontainers.image.source=https://$(PKG) org.opencontainers.image.revision=$(COMMIT_SHA)
+DOCKER_FLAGS ?=
+
+lastword-of = $(word $(words $1),$1)
+
+docker.%: TARGET = $(call lastword-of,$(subst ., ,$*))
+docker.%: build
+	docker buildx build \
+		$(DOCKER_FLAGS) \
+		$(foreach label,$(DOCKER_LABELS),--label=$(label)) \
+	  	$(foreach namespace,$(DOCKER_NAMESPACES),--tag=$(namespace)/$(TARGET):$(TAG)) \
+		--file=cmd/$(TARGET)/Dockerfile .
+
+docker.push.%: DOCKER_FLAGS = $(foreach arch,$(GOARCH),--platform=linux/$(arch)) --push
+docker.push.%: docker.%

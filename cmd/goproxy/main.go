@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/querycap/goproxy/internal/version"
 	"net/http"
 	"os"
 	"os/signal"
@@ -50,7 +51,7 @@ func main() {
 	s.Addr = "0.0.0.0:80"
 
 	go func() {
-		l.Info("serve on", "addr", s.Addr)
+		l.Info("goproxy "+version.Version+" serve on", "addr", s.Addr)
 		if err := s.ListenAndServe(); err != nil {
 			l.Error(err, "")
 		}
