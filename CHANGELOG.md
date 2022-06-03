@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
 
+
+# [0.0.9](https://github.com/querycap/goproxy/compare/v0.0.8...v0.0.9)
+
+### Bug Fixes
+
+* **fix** goproxy ([e81e030](https://github.com/querycap/goproxy/commit/e81e030f630bdfca6b0aba196551a64b773e5849))
+
+
+
 # [0.0.8](https://github.com/querycap/goproxy/compare/v0.0.7...v0.0.8)
 
 
