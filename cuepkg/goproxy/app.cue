@@ -1,8 +1,6 @@
-package mtk
+package goproxy
 
 import (
-	"encoding/json"
-
 	"github.com/innoai-tech/runtime/cuepkg/kube"
 )
 
