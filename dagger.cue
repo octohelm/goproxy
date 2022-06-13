@@ -110,7 +110,7 @@ dagger.#Plan & {
 			}
 		}
 
-		push: docker.#Push & {
+		ship: docker.#Push & {
 			dest: "\(_imageName):\(_tag)"
 			images: {
 				for _arch in _archs {

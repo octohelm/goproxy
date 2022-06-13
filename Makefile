@@ -7,6 +7,6 @@ build:
 	$(DAGGER) do build
 .PHONY: build
 
-push:
-	$(DAGGER) do push
+ship:
+	$(DAGGER) do ship
 .PHONY: push

@@ -11,7 +11,7 @@ require (
 require (
 	github.com/go-logr/logr v1.2.3 // indirect
 	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e // indirect
-	golang.org/x/net v0.0.0-20220531201128-c960675eff93 // indirect
+	golang.org/x/net v0.0.0-20220607020251-c690dde0001d // indirect
 	golang.org/x/text v0.3.7 // indirect
-	golang.org/x/xerrors v0.0.0-20220517211312-f3a8303e98df // indirect
+	golang.org/x/xerrors v0.0.0-20220609144429-65e65417b02f // indirect
 )
