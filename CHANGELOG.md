@@ -5,6 +5,9 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
+# [0.0.12](https://github.com/querycap/goproxy/compare/v0.0.11...v0.0.12)
+
+
 # [0.0.9](https://github.com/querycap/goproxy/compare/v0.0.8...v0.0.9)
 
 ### Bug Fixes
