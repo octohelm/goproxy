@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/goproxy/goproxy v0.10.2
 	golang.org/x/mod v0.5.1
-	k8s.io/klog/v2 v2.60.1
+	k8s.io/klog/v2 v2.70.1
 )
 
 require (
