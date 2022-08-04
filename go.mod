@@ -3,7 +3,7 @@ module github.com/octohelm/goproxy
 go 1.18
 
 require (
-	github.com/goproxy/goproxy v0.10.2
+	github.com/goproxy/goproxy v0.11.0
 	golang.org/x/mod v0.5.1
 	k8s.io/klog/v2 v2.60.1
 )
