@@ -21,7 +21,7 @@ var proxiedsumdbs = os.Getenv("PROXIEDSUMDBS")
 func main() {
 	g := &goproxy.Goproxy{}
 
-	g.Cacher = goproxy.DirCacher("/data")
+	g.Cacher = goproxy.DirCacher("/go/pkg/mod/cache")
 
 	g.ProxiedSUMDBs = func(rules []string) (finalRules []string) {
 		for i := range rules {

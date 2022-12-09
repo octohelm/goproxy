@@ -27,7 +27,7 @@ import (
 			"PROXIEDSUMDBS": _ | *"sum.golang.org https://goproxy.cn/sumdb/sum.golang.org"
 		}
 		readinessProbe: kube.#ProbeHttpGet & {
-			httpGet: {path: "/golang.org/x/mod/@v/v0.5.1.mod", port: ports.http}
+			httpGet: {path: "/golang.org/x/mod/@v/v0.7.0.mod", port: ports.http}
 		}
 		livenessProbe: readinessProbe
 	}
@@ -36,7 +36,7 @@ import (
 }
 
 #GoProxyStorage: kube.#Volume & {
-	mountPath: "/data"
+	mountPath: "/go/pkg/mod"
 	source: {
 		claimName: "goproxy-storage"
 		spec: {
