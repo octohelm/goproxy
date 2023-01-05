@@ -1,48 +1,63 @@
 package goproxy
 
 import (
-	"github.com/innoai-tech/runtime/cuepkg/kube"
+	kubepkg "github.com/octohelm/kubepkg/cuepkg/kubepkg"
 )
 
-#GoProxy: kube.#App & {
-	app: {
-		name:    "goproxy"
-		version: _ | *"main"
+#GoProxy: kubepkg.#KubePkg & {
+	metadata: {
+		name: _ | *"goproxy"
 	}
 
-	services: "\(app.name)": {
-		selector: "app": app.name
-		ports: containers."goproxy".ports
-	}
+	spec: {
+		version: _ | *"test"
 
-	containers: "goproxy": {
-		image: {
-			name: _ | *"ghcr.io/octohelm/goproxy"
-			tag:  _ | *"\(app.version)"
+		deploy: {
+			kind: "Deployment"
+			spec: {
+				replicas: _ | *1
+			}
 		}
-		ports: http: 80
-		env: {
-			"GOPROXY":       _ | *"https://goproxy.cn"
-			"GOSUMDB":       _ | *"sum.golang.org"
-			"PROXIEDSUMDBS": _ | *"sum.golang.org https://goproxy.cn/sumdb/sum.golang.org"
-		}
-		readinessProbe: kube.#ProbeHttpGet & {
-			httpGet: {path: "/golang.org/x/mod/@v/v0.7.0.mod", port: ports.http}
-		}
-		livenessProbe: readinessProbe
-	}
 
-	volumes: storage: #GoProxyStorage
-}
+		config: {
+			GOPRIVATE:     _ | *"git.innoai.tech"
+			GOPROXY:       _ | *"https://goproxy.cn"
+			PROXIEDSUMDBS: _ | *"sum.golang.org \(GOPROXY)/sumdb/sum.golang.org"
+		}
 
-#GoProxyStorage: kube.#Volume & {
-	mountPath: "/go/pkg/mod"
-	source: {
-		claimName: "goproxy-storage"
-		spec: {
-			accessModes: ["ReadWriteOnce"]
-			resources: requests: storage: "10Gi"
-			storageClassName: "local-path"
+		services: "#": {
+			ports: containers."goproxy".ports
+			paths: http: "/"
+			expose: _ | *{
+				type:    "Ingress"
+				gateway: _ | *["goproxy.x.io"]
+			}
+		}
+
+		containers: "goproxy": {
+			image: {
+				name: _ | *"ghcr.io/octohelm/goproxy"
+				tag:  _ | *"\(spec.version)"
+			}
+			ports: http: 80
+			env: PORT:   "80"
+			readinessProbe: kubepkg.#Probe & {
+				httpGet: {path: "/golang.org/x/mod/@v/v0.7.0.mod", port: ports.http}
+			}
+			livenessProbe: readinessProbe
+		}
+
+		volumes: storage: {
+			type:      "PersistentVolumeClaim"
+			mountPath: "/go/pkg/mod"
+			opt: {
+				claimName: "goproxy-storage"
+			}
+			spec: {
+				accessModes: ["ReadWriteOnce"]
+				resources: requests: storage: "10Gi"
+				storageClassName: "local-path"
+			}
 		}
 	}
 }

@@ -1,12 +1,9 @@
-export GIT_SHA ?= $(shell git rev-parse HEAD)
-export GIT_REF ?= HEAD
-
-DAGGER = dagger --log-format=plain -p ./
+WAGON = wagon -p ./wagon.cue
 
 build:
-	$(DAGGER) do build
+	$(WAGON) do go build
 .PHONY: build
 
 ship:
-	$(DAGGER) do ship
+	$(WAGON) do go ship pushx
 .PHONY: push
