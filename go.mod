@@ -10,6 +10,6 @@ require (
 
 require (
 	github.com/go-logr/logr v1.2.3 // indirect
-	golang.org/x/net v0.0.0-20220607020251-c690dde0001d // indirect
-	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/net v0.5.0 // indirect
+	golang.org/x/text v0.6.0 // indirect
 )
